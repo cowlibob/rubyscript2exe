@@ -618,8 +618,10 @@ else
 
   newlocation do
     if __FILE__ == $0
-      $0.replace(File.expand_path("./init.rb"))
-
+      $_0 = File.expand_path("./init.rb")
+      alias $__0 $0
+      alias $0 $_0
+      
       TAR2RUBYSCRIPT	= true	unless defined?(TAR2RUBYSCRIPT)
 
       if File.file?("./init.rb")

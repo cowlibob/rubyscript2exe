@@ -1,0 +1,33 @@
+Original Code: http://www.erikveen.dds.nl/rubyscript2exe
+
+Introduction
+===
+Ruby is an interpreted language, which requires (suprise) an interpreter to execute scripts.
+Erik Veenstra <rubyscript2exe@erikveen.dds.nl> created this tool to bundle ruby, dependencies and your script into a platform specific executable.
+
+Since his last update, changes within Ruby have broken rubyscript2exe (certainly 1.8.6 patchlevel 287, 1.8.7 patchlevel 72). The problem lies in the way rubyscript2exe modifies the $0 commandline parameter; now a frozen string.
+
+See http://rha7dotcom.blogspot.com/2008/09/rubyscript2exerb-and-623-cant-modify.html for an explaination of the fix.
+
+The fix is broke
+===
+However, I've seen this doesn't work for everyone. Here's why:
+
+$0 contains the name of the executed script. For example 'cool_ruby_tool.rb'. It has n bytes allocated to it, where n == 'cool_ruby_tool.rb'.size + x. I'm not sure what x contains or is for, but in my case, x == 23.
+
+When rubyscript2exe.rb calls $0.replace(), the allocation is increased as neccessary. However, the fix does not increase the allocated bytes, so the new path specified may be truncated.
+
+Another way
+===
+So the complete fix is to assign the new value to a string, then alias that string to $0:
+
+      $_0 = File.expand_path("./init.rb")
+      alias $__0 $0
+      alias $0 $_0
+
+Credits
+===
+All props go to Erik Veenstra for creating this excellent tool; many forum and ruby-talk users for posting / reposting the first fix.
+If this doesn't work for you, that's my fault, and we'll have to think again...
+
+James Cowlishaw.
